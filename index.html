@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Venn Diagram</title>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<link rel="stylesheet" href="css/bootstrap.css">
+		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
+		<style>
+			.hide{
+				display: none;
+			}
+			.tago{
+				display: none;
+			}
+		</style>
+		
+	</head>
+	<body style="background-color: #f8f9fa">
+		<div class="container">
+				
+			<h1 class="page-header"><img src="img/qcu-logo-sm.png" class="pull-left" style="width: 50px; height: 50px; margin-top: -5px">&nbsp;Venn Diagram</h1>
+			
+			<div class="row">
+				<div class="col-md-4">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Sets
+						</div>
+						<div class="panel-body">
+						<div class="row">
+						
+							<div id="tooltip" class="hidden">
+								<p><strong id="v"></strong></p>
+								<p><span id="value"></span></p>
+							</div>
+							
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="alert alert-info">
+										To separate each elements, press the <b><u>Enter</u></b> key on your keyboard.
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Select Operation</label>
+									<select id="operation" class="form-control">
+										<option value="">Select...</option>
+										<option value="union">Union</option>
+										<option value="intersection">Intersection</option>
+										<option value="difference">Difference</option>
+										<option value="symmetric">Symmetric Difference</option>
+										<option value="complement">Complement</option>
+									</select>
+								</div>
+							</div>
+							
+							
+							<div class="col-md-12 universal hide">
+								<button data-toggle="collapse" data-target="#universal" class="btn btn-sm btn-success">Universal Set</button>
+								<div class="form-group collapse" id="universal">
+								<input type="text" id="universal_elements" class="form-control tago">
+									<textarea id="universalset" class="form-control" rows="5" placeholder="Insert Universal Elements" maxlength="20"></textarea>
+								</div>
+							</div>
+
+							<div class="col-md-12 setA hide">
+
+								<input type="text" id="setA_elements" class="form-control tago">
+								<input type="text" id="myn3" onkeyup="keyin(this);remcomma();" class="form-control tago">
+								<input type="text" id="myn1" onkeyup="keyin(this);" class="form-control tago">
+								<input type="text" id="myn5" class="form-control tago">
+								
+								<input type="checkbox" name="toggle_list_1" id="toggle_list_1">
+								<label for="toggle_list_1" id="label1"></label>
+								<textarea id="s1_title" style="overflow:hidden" rows="1" placeholder="Please put list name here">SET A</textarea>
+								<textarea id="s1" class="form-control status-box List-group-1" rows="5" placeholder="Insert Elements" maxlength="20"></textarea>
+								<button id="clear1" class="btn" style="width: 20%" type="button">Clear</button>
+								
+							</div>
+							
+							<div class="col-md-12 setB hide">
+							
+								<input type="text" id="setB_elements" class="form-control tago">
+								<input type="text" id="myn4" onkeyup="keyin(this);remcomma();" class="form-control tago">
+								<input type="text" id="myn2" onkeyup="keyin(this);" class="form-control tago">
+								<input type="text" id="myn6" class="form-control tago">
+							
+								<input type="checkbox" name="toggle_list_2" id="toggle_list_2">
+						  	<label for="toggle_list_2"></label>
+						    <textarea  id="s2_title" style="overflow:hidden" rows="1" placeholder="Please put list name here">SET B</textarea>
+						   <textarea  id="s2" class="form-control status-box List-group-2" rows="5" placeholder="Insert Elements" maxlength="20"></textarea>
+						   <button id = "clear2" class="btn" style="width: 20%" type="button">Clear</button>
+							</div>
+							
+							<div class="col-md-12 calc hide">
+								<div class="form-group">
+									<button id="submit_comp" class="btn btn-success comp">Calculate Complement</button>
+									<button id="submit_un" class="btn btn-success un">Calculate Union</button>
+									<button type="button" class="btn btn-success dif" onclick="calculate_diff()">Calculate Difference</button>
+									<button type="button" class="btn btn-success intr" onclick="calculate_inter()">Calculate Intersection</button>
+									<button type="button" class="btn btn-success sym" onclick="calculate_sym()">Calculate Symmetric Difference</button>
+									<button type="button" class="btn btn-danger" onclick="clearFields()">Reset</button>
+								</div>
+							</div>
+							
+						</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									Elements
+								</div>
+								<div class="panel-body">
+									<div class="form-group">
+										<label>Click a venn diagram figure to display the elements:</label>
+										<textarea id="description" class="form-control status-box genelist" rows="5" style="resize: none" readonly></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Venn Diagram
+						</div>
+						<div class="panel-body">
+							<span id="show" style="display:none"></span>
+							<span id='myresult'></span>
+						</div>
+					</div>
+					<div id="first"></div>
+					<canvas id="canvas" width="746" height="900" style="display:none"></canvas>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Venn Diagram and Sets</h3>
+						</div>
+						<div class="panel-body">
+						
+							<div class="row">
+								<div class="col-md-4">
+									<div class="thumbnail">
+									<img src="img/venn_pic.png" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+										<div class="caption">
+											John Venn, (born August 4, 1834, Kingston upon Hull, England—died April 4, 1923, Cambridge), English logician and philosopher best known as the inventor of diagrams—known as Venn diagrams—for representing categorical propositions and testing the validity of categorical syllogisms. He also made important contributions to symbolic logic (also called mathematical logic), probability theory, and the philosophy of science. (Duignan, 2020)
+										</div>
+									</div>
+								</div>
+								<div class="col-md-8">
+								<h3 class="page-header">Venn Diagrams</h3>
+									<p style="text-align: justify; text-indent: 50px; font-size: 16px; line-height: 2">
+									A Venn diagram is an illustration of the relationships between and among sets, groups of objects that share something in common. Usually, Venn diagrams are used to depict set intersections (denoted by an upside-down letter U). This type of diagram is used in scientific and engineering presentations, in theoretical mathematics, in computer applications, and in statistics. (Contributor, 2005)
+									</p>
+									<p style="text-align: justify; text-indent: 50px; font-size: 16px; line-height: 2">
+									Venn diagrams help to visually represent the similarities and differences between two concepts. They have long been recognized for their usefulness as educational tools. Since the mid-20th century, Venn diagrams have been used as part of the introductory logic curriculum and in elementary-level educational plans around the world. (Kenton, 2020)
+									</p>
+									<p style="text-align: justify; text-indent: 50px; font-size: 16px; line-height: 2">
+									Venn diagrams are, at a basic level, simple pictorial representations of the relationship that exists between two sets of things. However, they can be much more complex. Still, the streamlined purpose of the Venn diagram to illustrate concepts and groups has led to their popularized use in many fields, including statistics, linguistics, logic, education, computer science, and business. (Kenton, 2020)
+									</p>
+									<h3 class="page-header">Sets</h3>
+									<p style="text-align: justify; text-indent: 50px; font-size: 16px; line-height: 2">
+										Set, In mathematics and logic, any collection of objects (elements), which may be mathematical (e.g., numbers, functions) or not. A set is commonly represented as a list of all its members enclosed in braces. A set with no members is called an empty, or null, set, and is denoted ∅. Because an infinite set cannot be listed, it is usually represented by a formula that generates its elements when applied to the elements of the set of counting numbers. (Britannica, 2014)
+									</p>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+								
+									<div class="panel-group" id="accordion">
+										<div class="panel panel-default">
+											<div class="panel-heading">
+												<h4 class="panel-title">
+													<span style="font-size: 20px; font-weight: bolder">+</span><a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+													Union</a>
+												</h4>
+											</div>
+											<div id="collapse1" class="panel-collapse collapse in">
+												<div class="panel-body">
+												
+												<div class="row">
+													<div class="col-md-3">
+														<img src="img/Union.jpg" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+													</div>
+													<div class="col-md-9">
+														<p style="text-align: justify; font-size: 16px; line-height: 2">
+															The union of two sets is a set containing all elements that are in A or in B (possibly both). For example, {1,2}∪{2,3}={1,2,3}. Thus, we can write x∈(A∪B) if and only if (x∈A) or (x∈B). Note that A∪B=B∪A. (Probability Course, 2020)
+														</p>
+													</div>
+												</div>
+												
+												</div>
+											</div>
+										</div>
+										<div class="panel panel-default">
+											<div class="panel-heading">
+												<h4 class="panel-title">
+													<span style="font-size: 20px; font-weight: bolder">+</span><a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+													Intersection</a>
+												</h4>
+											</div>
+											<div id="collapse2" class="panel-collapse collapse">
+												<div class="panel-body">
+													
+													<div class="row">
+														<div class="col-md-3">
+															<img src="img/Intersection.jpg" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+														</div>
+														<div class="col-md-9">
+															<p style="text-align: justify; font-size: 16px; line-height: 2">
+																The intersection of two sets A and B, denoted by A∩B, consists of all elements that are both in A and B. For example, {1,2}∩{2,3}={2}. (Probability Course, 2020)
+															</p>
+														</div>
+													</div>
+													
+												</div>
+											</div>
+										</div>
+										<div class="panel panel-default">
+											<div class="panel-heading">
+												<h4 class="panel-title">
+													<span style="font-size: 20px; font-weight: bolder">+</span><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+													Difference</a>
+												</h4>
+											</div>
+											<div id="collapse3" class="panel-collapse collapse">
+												<div class="panel-body">
+													
+													<div class="row">
+														<div class="col-md-3">
+															<img src="img/Difference_Left.jpg" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+														</div>
+														<div class="col-md-9">
+															<p style="text-align: justify; font-size: 16px; line-height: 2">
+																The difference (subtraction) is defined as follows. The set A−B consists of elements that are in A but not in B. For example if A={1,2,3} and B={3,5}, then A−B={1,2}. (Probability Course, 2020)
+															</p>
+														</div>
+													</div>
+													
+												</div>
+											</div>
+										</div>
+										<div class="panel panel-default">
+											<div class="panel-heading">
+												<h4 class="panel-title">
+													<span style="font-size: 20px; font-weight: bolder">+</span><a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+													Symmetric Difference</a>
+												</h4>
+											</div>
+											<div id="collapse5" class="panel-collapse collapse">
+											
+												<div class="panel-body">
+													<div class="row">
+														<div class="col-md-3">
+															<img src="img/Symmetric_Difference.jpg" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+														</div>
+														<div class="col-md-9">
+															<p style="text-align: justify; font-size: 16px; line-height: 2">
+																The symmetric difference using Venn diagram of two subsets A and B is a sub set of U, denoted by A △ B and is defined by A △ B = (A – B) ∪ (B – A). Let A and B are two sets. The symmetric difference of two sets A and B is the set (A – B) ∪ (B – A) and is denoted by A △ B. Thus, A △ B = (A – B) ∪ (B – A) = {x : x ∉ A ∩ B} or, A △ B = {x : [x ∈ A and x ∉ B] or [x ∈ B and x ∉ A]} (Math Only Math, 2019)
+															</p>
+														</div>
+													</div>
+												</div>
+												
+											</div>
+										</div>
+										<div class="panel panel-default">
+											<div class="panel-heading">
+												<h4 class="panel-title">
+													<span style="font-size: 20px; font-weight: bolder">+</span><a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+													Complement</a>
+												</h4>
+											</div>
+											<div id="collapse4" class="panel-collapse collapse">
+											
+												<div class="row">
+														<div class="col-md-3">
+															<img src="img/Complement.jpg" class="img-fluid img-thumbnail" style="width: 100%" alt="john venn">
+														</div>
+														<div class="col-md-9">
+															<p style="text-align: justify; font-size: 16px; line-height: 2">
+																The complement of a set A, denoted by Ac or A¯, is the set of all elements that are in the universal set S but are not in A. (Probability Course, 2020)
+															</p>
+														</div>
+													</div>
+												
+											</div>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">References</h3>
+						</div>
+						<div class="panel-body">
+							<ul>
+								<li>
+									&bull; Contributor, T. (2005, April 5). Venn diagram. WhatIs.Com. https://whatis.techtarget.com/definition/Venn-diagram
+								</li>
+								<li>
+									&bull; Duignan, B. (2020, July 31). John Venn. Encyclopedia Britannica. https://www.britannica.com/biography/John-Venn
+								</li>
+								<li>
+									&bull; Kenton, W. (2020, January 17). How to Use a Venn Diagram. Investopedia. https://www.investopedia.com/terms/v/venn-diagram.asp
+								</li>
+								<li>
+									&bull; Math Only Math. (2019). Symmetric Difference using Venn Diagram. https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html
+								</li>
+								<li>
+									&bull; Probability Course. (2020). Set Operations. https://www.probabilitycourse.com/chapter1/1_2_2_set_operations.php
+								</li>
+								<li>
+									&bull; The Editors of Encyclopaedia Britannica. (2014, May 24). Set. Encyclopedia Britannica. https://www.britannica.com/topic/set-mathematics-and-logic
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="panel panel-primary">
+						<div class="panel-body text-center">
+							Made with <i class="fa fa-heart" aria-hidden="true"></i> by Christian
+							<ul class="footer-list">
+								<li><a href="https://github.com/christiancvillaruz" target="_blank"><i class="fa fa-github"></i></a></li>
+								<li><a href="https://twitter.com/robertssson13" target="_blank"><i class="fa fa-twitter"></i></a></li>
+								<li><a href="https://facebook.com/kristyaaaan7" target="_blank"><i class="fa fa-facebook"></i></a></li>
+								<li><a href="https://linkedin.com/in/christiancvillaruz" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
+		<script src="js/bundle.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/venn.js"></script>
+	</body>
+</html>
